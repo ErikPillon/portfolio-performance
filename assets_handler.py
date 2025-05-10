@@ -29,6 +29,7 @@ class AssetsHandler:
         self._preload_hist_data()
         self.data = self.import_data()
         self._load_hist_data()
+        self.get_calculated_quantity()
 
         # self.sanity_check()
 
@@ -65,6 +66,25 @@ class AssetsHandler:
 
         return self.hist_data[ticker].loc[start_date:end_date]
 
+    def get_total_capital_invested(self):
+        return self.data["Investment"].sum()
+
+    def get_calculated_quantity(self):
+        for index, row in self.data.iterrows():
+            closing_price = self.get_daily_closing(
+                ticker=row["Ticker"], date=row["Date"]
+            )
+            self.data.loc[index, "Price"] = closing_price
+            self.data.loc[index, "CalculatedQuantity"] = (
+                row["Investment"] / closing_price
+            )
+
+    def get_daily_closing(self, ticker, date):
+        # breakpoint()
+        if date > self.hist_data[ticker].index.max():
+            date = self.hist_data[ticker].index.max()
+        return self.hist_data[ticker].loc[date]["Close"]
+
     def get_data(self):
         return self.data
 
@@ -77,8 +97,26 @@ class AssetsHandler:
     def get_all_tickers(self):
         return self.data["Ticker"].unique()
 
+    def get_portfolio_size_on_date(self, date):
+        return sum(
+            row["Quantity"] * self.get_daily_closing(row["Ticker"], date)
+            for _, row in self.data.iterrows()
+        )
+
+    def get_estimated_portfolio_size_on_date(self, date):
+        return sum(
+            row["CalculatedQuantity"] * self.get_daily_closing(row["Ticker"], date)
+            for _, row in self.data.iterrows()
+        )
+
 
 if __name__ == "__main__":
     assets_handler = AssetsHandler()
-    breakpoint()
-    print(assets_handler.get_sub_interval_data("1GOOGL.MI", "2022-05-02"))
+    # print(assets_handler.data)
+    print(
+        f"Portfolio size on {datetime.now().date()}: {assets_handler.get_portfolio_size_on_date(datetime.now())} EUR"
+    )  # print(assets_handler.get_portfolio_size_on_date(datetime.now().date()))
+    print(f"Total investment: {assets_handler.get_total_value()} EUR")
+    print(
+        f"Total estimated investment: {assets_handler.get_estimated_portfolio_size_on_date(datetime.now())} EUR"
+    )

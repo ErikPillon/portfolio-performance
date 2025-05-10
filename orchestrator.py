@@ -59,6 +59,18 @@ class Orchestrator:
     def visualize_portfolio_evolution(self):
         return self.visualiser.get_asset_evolution()
 
+    def get_portfolio_performance(self):
+        return self.processor.get_portfolio_performance()
+
+    def get_total_capital_invested(self):
+        return self.assets_handler.get_total_capital_invested()
+
+    def get_portfolio_size_on_date(self, date):
+        return self.assets_handler.get_portfolio_size_on_date(date)
+
+    def get_estimated_portfolio_size_on_date(self, date):
+        return self.assets_handler.get_estimated_portfolio_size_on_date(date)
+
 
 if __name__ == "__main__":
     o = Orchestrator()
