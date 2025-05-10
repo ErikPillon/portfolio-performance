@@ -66,7 +66,7 @@ class AssetsHandler:
 
         return self.hist_data[ticker].loc[start_date:end_date]
 
-    def get_total_value(self):
+    def get_total_capital_invested(self):
         return self.data["Investment"].sum()
 
     def get_calculated_quantity(self):
@@ -103,6 +103,12 @@ class AssetsHandler:
             for _, row in self.data.iterrows()
         )
 
+    def get_estimated_portfolio_size_on_date(self, date):
+        return sum(
+            row["CalculatedQuantity"] * self.get_daily_closing(row["Ticker"], date)
+            for _, row in self.data.iterrows()
+        )
+
 
 if __name__ == "__main__":
     assets_handler = AssetsHandler()
@@ -111,3 +117,6 @@ if __name__ == "__main__":
         f"Portfolio size on {datetime.now().date()}: {assets_handler.get_portfolio_size_on_date(datetime.now())} EUR"
     )  # print(assets_handler.get_portfolio_size_on_date(datetime.now().date()))
     print(f"Total investment: {assets_handler.get_total_value()} EUR")
+    print(
+        f"Total estimated investment: {assets_handler.get_estimated_portfolio_size_on_date(datetime.now())} EUR"
+    )
