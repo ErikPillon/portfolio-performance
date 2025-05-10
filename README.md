@@ -56,7 +56,7 @@ streamlit run app/main.py
 Include tracking and statistics for fixed-income assets.
 
 #### 🧠 Sentiment Analysis Tool
-Inspired by CNN's Fear & Greed Index, integrate a sentiment-based indicator for smarter investment decisions.
+Inspired by CNN's (Fear & Greed Index)[https://edition.cnn.com/markets/fear-and-greed], integrate a sentiment-based indicator for smarter investment decisions.
 
 #### 📊 Enhanced Visualizations
 More interactive charts, dashboards, and possibly benchmarking tools.
