@@ -1,8 +1,12 @@
 import streamlit as st
 import plotly.graph_objects as go
+from fg_index import FGIndex
+from datetime import datetime
+
+
+fg_index = FGIndex()
 
 # Streamlit app layout
-st.set_page_config()
 st.title("📈 Fear & Greed Index Gauge")
 
 st.markdown(
@@ -15,42 +19,42 @@ st.markdown(
 )
 
 
-# Function to create the gauge chart
-def draw_fear_greed_gauge(value):
-    fig = go.Figure()
+st.subheader("Market Momentum")
+fig = fg_index.get_market_momentum_fig()
+left_col, right_col = st.columns([2, 1])
+with left_col:
+    st.plotly_chart(fig, use_container_width=True)
 
-    fig.add_trace(
-        go.Indicator(
-            mode="gauge+number",
-            value=value,
-            title={"text": "Fear & Greed Index"},
-            gauge={
-                "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "darkgray"},
-                "bar": {"color": "black"},
-                "steps": [
-                    {"range": [0, 20], "color": "#f7f7f7"},  # Extreme Fear
-                    {"range": [20, 40], "color": "#f7f7f7"},  # Fear
-                    {"range": [40, 60], "color": "#f7f7f7"},  # Neutral
-                    {"range": [60, 80], "color": "#f7f7f7"},  # Greed
-                    {"range": [80, 100], "color": "#f7f7f7"},  # Extreme Greed
-                ],
-                "threshold": {
-                    "line": {"color": "black", "width": 4},
-                    "thickness": 0.75,
-                    "value": value,
-                },
-            },
-        )
+with right_col:
+    st.write("""
+        It’s useful to look at stock market levels compared to where they’ve been over the past few months.
+        When the S&P 500 is above its moving or rolling average of the prior 125 trading days, 
+        that’s a sign of positive momentum. But if the index is below this average, 
+        it shows investors are getting skittish. The Fear & Greed Index uses slowing momentum as a signal for Fear 
+        and a growing momentum for Greed.
+    """)
+st.caption(f"Last updated {datetime.now().strftime('%B %d at %-I:%M:%S %p %Z')}")
+
+
+st.subheader("Market Volatility")
+fig = fg_index.get_market_volatility_fig()
+
+left_col, right_col = st.columns([2, 1])
+with left_col:
+    st.plotly_chart(fig, use_container_width=True)
+
+with right_col:
+    st.write(
+        """
+        The most well-known measure of market sentiment is the CBOE Volatility Index, or VIX. 
+        The VIX measures expected price fluctuations or volatility in the S&P 500 Index options over the next 30 days. 
+        The VIX often drops on days when the broader market rallies and soars when stocks plunge. 
+        But the key is to look at the VIX over time. 
+        It tends to be lower in bull markets and higher when the bears are in control. 
+        The Fear & Greed Index uses increasing market volatility as a signal for Fear.
+    """,
+        width=1000,
     )
-
-    fig.update_layout(margin={"t": 20, "b": 0, "l": 0, "r": 0}, height=400)
-
-    return fig
-
-
-# Simulated index value
-index_value = st.slider("Select index value:", 0, 100, 62)
-
-# Render gauge
-fig = draw_fear_greed_gauge(index_value)
-st.plotly_chart(fig)
+st.caption(
+    f"Last updated {datetime.now().strftime('%B %d at %-I:%M:%S %p %Z')}",
+)
