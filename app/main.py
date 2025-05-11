@@ -9,14 +9,17 @@ st.title("Portfolio Performance Analyser")
 # Sidebar
 st.sidebar.header("About")
 st.sidebar.markdown(
-    "Indipendent project developed by [Erik Pillon](https://ErikPillon.github.io) for the pricing evaluation of put-call options with different numerical and analytical methods."
+    "Indipendent project developed by [Erik Pillon](https://ErikPillon.github.io) for assets tracking, financial analysis and portfolio performance."
 )
 
 
-st.sidebar.header("Additional Resources")
+st.sidebar.header("How to use this app")
 st.sidebar.markdown(
     """
-    How to use this app:
+    1. Export the assets allocation template as an Excel file.
+    2. List all of the assets that you want to track (Tickers, Date, Quantity). Tickers need to follow the (Yahoo finance)[https://finance.yahoo.com/lookup/] convention.
+    3. Upload your file through the dedicated import tool.
+    4. Enjoy!
     """
 )
 
