@@ -14,6 +14,9 @@ class Orchestrator:
     def get_assets(self):
         return self.assets_handler.get_data()
 
+    def get_bonds(self):
+        return self.assets_handler.bonds
+
     def get_sub_interval_data(self, ticker, start_date, end_date=None):
         return self.assets_handler.get_sub_interval_data(ticker, start_date, end_date)
 
@@ -70,6 +73,12 @@ class Orchestrator:
 
     def get_estimated_portfolio_size_on_date(self, date):
         return self.assets_handler.get_estimated_portfolio_size_on_date(date)
+
+    def visualize_bonds_distribution(self):
+        return self.visualiser.get_bonds_distribution(bonds=self.assets_handler.bonds)
+
+    def get_total_bonds_invested(self):
+        return self.assets_handler.get_total_bonds_invested()
 
 
 if __name__ == "__main__":
