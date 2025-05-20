@@ -7,7 +7,7 @@ import pandas as pd
 class Orchestrator:
     def __init__(self):
         self.assets_handler = AssetsHandler()
-        self.visualiser = Visualiser(self)
+        self.visualiser = Visualiser()
         self.processor = Processor(self)
         self.assets = self.get_assets()
 

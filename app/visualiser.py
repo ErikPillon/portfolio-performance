@@ -1,16 +1,13 @@
-import plotly.express as px
 import pandas as pd
 from datetime import datetime, timedelta
-import plotly.express as px
+
 import plotly.graph_objects as go
+import plotly.express as px
 
 
 class Visualiser:
-    def __init__(self, orchestrator):
-        self.orchestrator = orchestrator
-
-    def get_data(self):
-        return self.orchestrator.assets_handler.get_data()
+    def __init__(self):
+        pass
 
     def get_asset_evolution(self):
         portfolio = self.orchestrator.get_portfolio_timeseries()
@@ -65,7 +62,16 @@ class Visualiser:
         )
         return fig
 
-    def get_bonds_distribution(self, bonds):
+    def get_bonds_distribution(self, bonds: pd.DataFrame) -> go.Figure:
+        """generate a sunburst chart with the bonds distribution
+        df must contain columns "Name", "BondType", "Invested"
+
+        Args:
+            bonds (pd.DataFrame): df containing info about the bonds
+
+        Returns:
+            px.Figure: a sunburst chart
+        """
         fig = px.sunburst(
             bonds,
             path=["BondType", "Name"],
