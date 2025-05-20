@@ -1,6 +1,7 @@
 import pandas as pd
 import yfinance as YF
 from datetime import datetime
+import streamlit as st
 
 # preload the most common tickers
 TICKERS = [
@@ -16,6 +17,7 @@ TICKERS = [
 ]
 
 
+@st.cache_data(ttl=60 * 60 * 12)
 def fetch_yf_data(ticker: str):
     df = YF.Ticker(ticker).history(period="max")
     df.index = df.index.tz_localize(None)
@@ -27,7 +29,7 @@ class AssetsHandler:
         self.last_import = None
         self.hist_data = {}
         self._preload_hist_data()
-        self.data = self.import_data()
+        (self.data, self.bonds) = self.import_data()
         self._load_hist_data()
         self.get_calculated_quantity()
 
@@ -50,7 +52,10 @@ class AssetsHandler:
         self.last_import = datetime.now().date()
 
     def import_data(self, path="data/Assets.xlsx"):
-        return pd.read_excel(path)
+        return (
+            pd.read_excel(path, sheet_name="Stocks"),
+            pd.read_excel(path, sheet_name="Summary"),
+        )
 
     def get_hist_data(self, ticker=None):
         if datetime.now().date() > self.last_import:
@@ -88,6 +93,9 @@ class AssetsHandler:
     def get_data(self):
         return self.data
 
+    def get_bonds(self):
+        return self.bonds
+
     def get_first_date(self):
         return self.data["Date"].min()
 
@@ -108,6 +116,15 @@ class AssetsHandler:
             row["CalculatedQuantity"] * self.get_daily_closing(row["Ticker"], date)
             for _, row in self.data.iterrows()
         )
+
+    def get_total_bonds_invested(self):
+        """
+        Calculates the total amount of capital invested in bonds.
+
+        Returns:
+        float: The sum of all investments in bonds.
+        """
+        return self.bonds["Invested"].sum()
 
 
 if __name__ == "__main__":

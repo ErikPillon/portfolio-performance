@@ -1,6 +1,8 @@
 import plotly.express as px
 import pandas as pd
 from datetime import datetime, timedelta
+import plotly.express as px
+import plotly.graph_objects as go
 
 
 class Visualiser:
@@ -61,4 +63,15 @@ class Visualiser:
             title="Market Volatility",
             labels={"x": "Date", "y": "VIX"},
         )
+        return fig
+
+    def get_bonds_distribution(self, bonds):
+        fig = px.sunburst(
+            bonds,
+            path=["BondType", "Name"],
+            values="Invested",
+        )
+
+        fig.update_layout(margin=dict(t=0, l=0, r=0, b=0))
+
         return fig
