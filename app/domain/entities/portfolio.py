@@ -69,7 +69,6 @@ class Portfolio:
         return 0
 
     def get_total_capital_invested_in_stocks(self, date: str = today) -> float:
-        breakpoint()
         return sum(asset.price for asset in self.assets if asset.date <= date)
 
     def get_total_capital_invested_in_bonds(self, date: str = today) -> float:
