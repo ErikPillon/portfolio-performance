@@ -3,19 +3,6 @@ import yfinance as YF
 from datetime import datetime
 import streamlit as st
 
-# preload the most common tickers
-TICKERS = [
-    "1GOOGL.MI",
-    "NAQ.F",
-    "CSSPX.MI",
-    "XEON.DE",
-    "XEOD.DE",
-    "IQQQ.DE",
-    "EUNL.DE",
-    "VWCE.DE",
-    "APC.DE",
-]
-
 
 @st.cache_data(ttl=60 * 60 * 12)
 def fetch_yf_data(ticker: str):
@@ -24,32 +11,12 @@ def fetch_yf_data(ticker: str):
     return df
 
 
-class AssetsHandler:
+class AssetsImporter:
     def __init__(self):
-        self.last_import = None
-        self.hist_data = {}
-        self._preload_hist_data()
         (self.data, self.bonds) = self.import_data()
-        self._load_hist_data()
         self.get_calculated_quantity()
 
         # self.sanity_check()
-
-    def _preload_hist_data(self):
-        for ticker in TICKERS:
-            self.hist_data[ticker] = fetch_yf_data(ticker)
-            print(f"Preloaded {ticker}")
-        self.last_import = datetime.now().date()
-
-    def _load_hist_data(self):
-        if datetime.now().date() > self.last_import:
-            self.hist_data = {}
-        for ticker in self.data["Ticker"].unique():
-            if ticker in self.hist_data:
-                continue
-            self.hist_data[ticker] = fetch_yf_data(ticker)
-            print(f"Loaded {ticker}")
-        self.last_import = datetime.now().date()
 
     def import_data(self, path="data/Assets.xlsx"):
         return (
@@ -90,12 +57,6 @@ class AssetsHandler:
             date = self.hist_data[ticker].index.max()
         return self.hist_data[ticker].loc[date]["Close"]
 
-    def get_data(self):
-        return self.data
-
-    def get_bonds(self):
-        return self.bonds
-
     def get_first_date(self):
         return self.data["Date"].min()
 
@@ -125,15 +86,3 @@ class AssetsHandler:
         float: The sum of all investments in bonds.
         """
         return self.bonds["Invested"].sum()
-
-
-if __name__ == "__main__":
-    assets_handler = AssetsHandler()
-    # print(assets_handler.data)
-    print(
-        f"Portfolio size on {datetime.now().date()}: {assets_handler.get_portfolio_size_on_date(datetime.now())} EUR"
-    )  # print(assets_handler.get_portfolio_size_on_date(datetime.now().date()))
-    print(f"Total investment: {assets_handler.get_total_value()} EUR")
-    print(
-        f"Total estimated investment: {assets_handler.get_estimated_portfolio_size_on_date(datetime.now())} EUR"
-    )
